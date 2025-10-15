@@ -22,3 +22,11 @@ cd client
 
 npm start
 ```
+![Description](snaps/img_1.png)
+![Description](snaps/img_2.png)
+![Description](snaps/img_3.png)
+![Description](snaps/img_4.png)
+![Description](snaps/img_5.png)
+![Description](snaps/img_6.png)
+![Description](snaps/img_7.png)
+![Description](snaps/img_8.png)
