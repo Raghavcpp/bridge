@@ -1,21 +1,12 @@
-const nodemailer = require('nodemailer')
-
-
+const axios = require('axios')
 
 // send mail
+// Render's free tier blocks outbound SMTP (25/465/587), so we send over Brevo's
+// HTTPS API instead. Requires env: BREVO_API_KEY and SENDER_EMAIL (a verified
+// sender in Brevo). SENDER_NAME is optional.
 
 const sendEmail = async (to , url , type) => {
    try {
-    const smtpTransport = nodemailer.createTransport({
-
-        service:"gmail",
-        auth: {
-           user:process.env.email_mail,
-           pass:process.env.email_pass,
-        }
-        
-    })
-
     const mailOptionsVerification = {
 
         from: process.env.email_mail,
@@ -35,12 +26,31 @@ const sendEmail = async (to , url , type) => {
         `
     }
     const mailOptions = type==="REGISTER"?mailOptionsVerification:mailOptionsReset;
-    const info  = smtpTransport.sendMail(mailOptions);
-    return info;
+
+    const info = await axios.post(
+        "https://api.brevo.com/v3/smtp/email",
+        {
+            sender: { name: process.env.SENDER_NAME || "Communication Bridge", email: process.env.SENDER_EMAIL },
+            to: [{ email: to }],
+            subject: mailOptions.subject,
+            htmlContent: mailOptions.html,
+        },
+        {
+            headers: {
+                "api-key": process.env.BREVO_API_KEY,
+                "Content-Type": "application/json",
+                accept: "application/json",
+            },
+            timeout: 15000,
+        }
+    );
+    return info.data;
 
    } catch(err){
-     
-       return res.status(500).json({msg:"Something went wrong"})
+       // Brevo returns error details in err.response.data
+       console.log("sendMail error:", err.response?.data || err.message)
+       // rethrow so the calling controller returns a real error instead of hanging
+       throw err
    }
 
 
