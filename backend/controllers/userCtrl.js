@@ -93,15 +93,11 @@ const userCtrl = {
             const refresh_token = createRefreshToken({ id: user._id })
 
             res.cookie('refreshtoken', refresh_token, {
-
-                // httpOnly: true,
+                httpOnly: true,
                 path: "/api/user/refresh_token",
-                maxAge: 7 * 24 * 60 * 60 * 1000 // 7days,,
-                // ,
-                // sameSite :'none'
-
-
-
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                secure: true,      // required whenever sameSite is 'none' (both sites are HTTPS)
+                sameSite: 'none',  // frontend & backend are different domains -> cross-site cookie
             })
 
             res.json({ user: user, msg: "Login success" })
