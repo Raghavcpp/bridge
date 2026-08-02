@@ -106,7 +106,7 @@ export default function Header() {
                 <li className="nav-item">
                   <Link
                     exact
-                    to="/contact"
+                    to="/"
                     activeClassName="active"
                     className="nav-links"
                     onClick={handleLogout}
